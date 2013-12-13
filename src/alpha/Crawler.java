@@ -11,6 +11,16 @@ import java.net.URLConnection;
 
 public class Crawler {
     private static final String target = "http://www.reddit.com/r/all.json";
+    public static void getTitles(JsonArray children) {
+        for (JsonElement child: children) {
+            JsonObject o = child
+                .getAsJsonObject()
+                .get("data")
+                .getAsJsonObject();
+            System.out.println(o.get("title"));
+        }
+    }
+
     public static void main(String[] args) {
         try {
             URL url = new URL(target);
@@ -34,6 +44,8 @@ public class Crawler {
                     .getAsJsonObject();
             JsonObject data = root.get("data").getAsJsonObject();
             JsonArray children = data.get("children").getAsJsonArray();
+            getTitles(children);
+            
             for (JsonElement child: children) {
                 RedditPost post = new RedditPost();
                 JsonObject o = child
@@ -61,7 +73,7 @@ public class Crawler {
                 post.setIs_self(o.get("is_self").getAsBoolean());
 
                 //System.out.println(gson.toJson(o));
-                System.out.println(post.insertSql());
+                //System.out.println(post.insertSql());
                 //return;
             }
         } catch (IOException ex) {
